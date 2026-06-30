@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>EconoPosto - Inteligência Estatística Real</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EconoPosto">
+
+    <style>
+        :root {
+            --bg-dark: #070a13;
+            --panel-bg: #0f1524;
+            --panel-border: #1e2943;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #64748b;
+            --green: #10b981;
+            --gold: #fbbf24;
+            --danger: #f43f5e;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            letter-spacing: -0.2px;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 440px;
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--panel-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+        .splash-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 2.2rem;
+            color: #fff;
+            box-shadow: 0 0 30px var(--accent-glow);
+            animation: pulse 1.8s infinite ease-in-out;
+        }
+        .splash-title { margin-top: 15px; font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
+        .splash-tag { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-top: 4px; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(56, 189, 248, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+        }
+
+        .brand-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(30, 41, 67, 0.5);
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-box { width: 38px; height: 38px; background: linear-gradient(135deg, #0284c7, #38bdf8); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: #fff; }
+        .brand-name { font-size: 1.1rem; font-weight: 800; }
+        .brand-tagline { font-size: 0.65rem; color: var(--accent); font-weight: 700; text-transform: uppercase; }
+        .btn-adm-trigger { background: #1e2943; border: 1px solid #334155; color: var(--text-muted); padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 600; cursor: pointer; }
+
+        .counter-badge { background: rgba(251, 191, 36, 0.06); color: var(--gold); padding: 8px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; text-align: center; border: 1px solid rgba(251, 191, 36, 0.15); }
+
+        .pnl-container { background: rgba(7, 10, 19, 0.6); border: 1px solid var(--panel-border); border-radius: 12px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .pnl-stats { display: flex; gap: 12px; }
+        .pnl-stat-box { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; }
+        .pnl-stat-box span { display: block; font-size: 1rem; font-weight: 800; margin-top: 1px; }
+        .pnl-actions { display: flex; gap: 4px; }
+        .btn-pnl { border: none; padding: 6px 10px; border-radius: 6px; color: white; font-weight: 700; font-size: 0.7rem; cursor: pointer; }
+        .btn-green { background: var(--green); }
+        .btn-red { background: var(--danger); }
+
+        .market-card { background: rgba(7, 10, 19, 0.5); border-radius: 12px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--panel-border); }
+        .market-meta { font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; color: #38bdf8; text-transform: uppercase; display: flex; justify-content: space-between; }
+        .input-row { display: flex; gap: 10px; margin-bottom: 8px; }
+        .input-row:last-child { margin-bottom: 0; }
+        .input-group { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .input-group label { font-size: 0.7rem; color: #64748b; font-weight: 600; }
+
+        input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border); background: #131b2e; color: white; font-size: 0.9rem; outline: none; text-align: center; font-weight: 600; }
+        input::placeholder { color: #334155; font-weight: 400; }
+        input:focus { border-color: var(--accent); }
+
+        .btn-action { width: 100%; padding: 14px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; box-shadow: 0 10px 20px -5px rgba(2, 132, 199, 0.3); }
+
+        .screen-results { margin-top: 15px; padding: 12px; background: rgba(7, 10, 19, 0.6); border-radius: 12px; border: 1px solid var(--panel-border); display: none; }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .grid-item { background: #131b2e; border: 1px solid var(--panel-border); padding: 10px; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between; }
+        .grid-label { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        .grid-val { font-size: 0.85rem; font-weight: 800; margin-top: 4px; }
+        .grid-pct { font-size: 0.75rem; font-weight: 800; color: #a7f3d0; background: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 4px; margin-top: 6px; text-align: center; border: 1px solid rgba(16, 185, 129, 0.15); width: max-content; }
+
+        .paywall-overlay, .adm-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 10, 19, 0.98); border-radius: 20px; z-index: 10; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .paywall-title { color: var(--text-main); font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+        .paywall-text { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; text-align: center; line-height: 1.4; }
+        .pix-key-box { background: #131b2e; width: 100%; padding: 10px; border-radius: 10px; border: 1px dashed rgba(251, 191, 36, 0.3); margin-bottom: 12px; text-align: center;}
+        .btn-subscribe { width: 100%; padding: 10px; background: #fff; color: #000; border: none; border-radius: 8px; font-weight: 700; text-align: center; text-decoration: none; margin-bottom: 12px; display: block; font-size: 0.85rem; }
+        .adm-card { background: var(--panel-bg); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; width: 100%; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="splash-screen" id="splash">
+    <div class="splash-logo">EP</div>
+    <div class="splash-title">ECONO POSTO</div>
+    <div class="splash-tag">Análise de Confrontos Diretos</div>
+</div>
+
+<div class="app-shell">
+    <!-- TELA DE ASSINATURA -->
+    <div class="paywall-overlay" id="paywall">
+        <div class="paywall-title">Acesso Restrito</div>
+        <div class="paywall-text">Suas análises estatísticas gratuitas acabaram. Efetue o PIX e libere o EconoPosto imediatamente.</div>
+        <div class="pix-key-box">
+            🔑 <span style="color:var(--text-muted); font-size:0.7rem;">PIX Celular:</span><br>
+            <span style="font-size: 1rem; color: var(--gold); font-weight: 700;">79999055301</span>
+        </div>
+        <a href="https://wa.me/5579999055301?text=Enviei+o+PIX.+Quero+minha+chave+do+EconoPosto!" class="btn-subscribe" target="_blank">Confirmar Pagamento</a>
+        <div style="width:100%; border-top:1px solid var(--panel-border); padding-top:10px; display:flex; gap:6px;">
+            <input type="text" id="input-chave" placeholder="Chave VIP">
+            <button onclick="validarChaveManual()" style="padding:0 12px; background:var(--accent); border:none; color:black; border-radius:8px; font-weight:700; cursor:pointer;">Ativar</button>
+        </div>
+    </div>
+
+    <!-- PAINEL DE LOGIN DO ADM -->
+    <div class="adm-overlay" id="adm-panel">
+        <div class="adm-card">
+            <h3 style="margin-bottom:10px; color:var(--accent);">Acesso Administrativo</h3>
+            <input type="password" id="adm-senha" placeholder="Digite a Chave Master do ADM">
+            <button onclick="autenticarADM()" style="width:100%; padding:10px; background:var(--green); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px;">Entrar</button>
+            <button onclick="fecharPainelADM()" style="font-size:0.75rem; color:var(--text-muted); background:none; border:none; cursor:pointer; margin-top:8px;">Voltar</button>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO -->
+    <div class="brand-header">
+        <div class="logo-area">
+            <div class="logo-box">EP</div>
+            <div>
+                <div class="brand-name">ECONO POSTO</div>
+                <div class="brand-tagline">Statistical Engine Pro</div>
+            </div>
+        </div>
+        <button class="btn-adm-trigger" onclick="abrirPainelADM()">Painel ADM</button>
+    </div>
+
+    <div class="counter-badge" id="counter-display">Iniciando...</div>
+
+    <!-- PAINEL DE LUCROS E PERDAS -->
+    <div class="pnl-container">
+        <div class="pnl-stats">
+            <div class="pnl-stat-box">GREENS<span id="pnl-greens" style="color:var(--green)">0</span></div>
+            <div class="pnl-stat-box">REDS<span id="pnl-reds" style="color:var(--danger)">0</span></div>
+            <div class="pnl-stat-box">TAXA<span id="pnl-taxa" style="color:white">0%</span></div>
+        </div>
+        <div class="pnl-actions">
+            <button class="btn-pnl btn-green" onclick="registrarPnl(true)">+ Green</button>
+            <button class="btn-pnl btn-red" onclick="registrarPnl(false)">+ Red</button>
+        </div>
+    </div>
+
+    <!-- IDENTIFICAÇÃO DOS TIMES -->
+    <div class="market-card">
+        <div class="market-meta"><span>⚔️ Identificação do Confronto</span></div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>Time da Casa</label>
+                <input type="text" id="nome-casa" placeholder="Ex: Flamengo" style="text-transform: uppercase;">
+            </div>
+            <div class="input-group">
+                <label>Time de Fora</label>
+                <input type="text" id="nome-fora" placeholder="Ex: Palmeiras" style="text-transform: uppercase;">
+            </div>
+        </div>
+    </div>
+
+    <!-- INPUTS CRUZADOS (ODDS) -->
+    <div class="market-card">
+        <div class="market-meta"><span>⚖️ Mercado 1X2 (Odds)</span></div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>Odd Casa</label>
+                <input type="number" id="odd-casa" value="1.90" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Odd Fora</label>
+                <input type="number" id="odd-fora" value="3.20" step="0.01">
+            </div>
+        </div>
+    </div>
+
+    <!-- INPUTS HISTÓRICO -->
+    <div class="market-card">
+        <div class="market-meta"><span>📊 Histórico Recente (Últimos 5 Jogos)</span></div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>Média Gols Casa</label>
+                <input type="number" id="hist-gols-casa" value="1.8" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Média Gols Fora</label>
+                <input type="number" id="hist-gols-fora" value="1.2" step="0.1">
+            </div>
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>Média Cantos Casa</label>
+                <input type="number" id="hist-cantos-casa" value="5.5" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Média Cantos Fora</label>
+                <input type="number" id="hist-cantos-fora" value="4.2" step="0.1">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-action" onclick="ejecutarMapeamento()">Processar Cruzamento Estatístico</button>
+
+    <!-- RESULTADOS MULTIMERCADOS -->
+    <div class="screen-results" id="resultados">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; padding-bottom:8px; border-bottom:1px solid var(--panel-border)">
+            <span>Tendência Principal:</span>
+            <span id="res-status" style="font-weight: 800; color:var(--green)">-</span>
+        </div>
+        
+        <div class="results-grid">
+            <div class="grid-item">
+                <div class="grid-label">⚽ Previsão de Gols</div>
+                <div class="grid-val" id="res-gols">-</div>
+                <div class="grid-pct" id="pct-gols">0%</div>
+            </div>
+            <div class="grid-item">
+                <div class="grid-label">🚩 Linha de Cantos</div>
+                <div class="grid-val" id="res-cantos" style="color:var(--accent);">-</div>
+                <div class="grid-pct" id="pct-cantos">0%</div>
+            </div>
+            <div class="grid-item">
+                <div class="grid-label">🟨 Cartões Estimados</div>
+                <div class="grid-val" id="res-cartoes" style="color:var(--gold);">-</div>
+                <div class="grid-pct" id="pct-cartoes">0%</div>
+            </div>
+            <div class="grid-item">
+                <div class="grid-label">🏹 Chutes Estimados</div>
+                <div class="grid-val" id="res-chutes">-</div>
+                <div class="grid-pct" id="pct-chutes">0%</div>
+            </div>
+            <div class="grid-item">
+                <div class="grid-label">🔄 Ambos Marcam</div>
+                <div class="grid-val" id="res-ambos">-</div>
+                <div class="grid-pct" id="pct-ambos">0%</div>
+            </div>
+            <div class="grid-item">
+                <div class="grid-label">📉 Segurança (Menos)</div>
+                <div class="grid-val" id="res-menos-gols" style="color:var(--danger);">-</div>
+                <div class="grid-pct" id="pct-menos-gols">0%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Gerenciador da Splash Screen inicial
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash');
+            splash.style.opacity = '0';
+            splash.style.visibility = 'hidden';
+        }, 2200);
+    });
+
+    // Estado e persistência local (LocalStorage)
+    let testesRestantes = localStorage.getItem('qb_free_runs');
+    let premiumAtivo = localStorage.getItem('qb_premium_status') === 'true';
+    let greens = parseInt(localStorage.getItem('qb_pnl_g') || 0);
+    let reds = parseInt(localStorage.getItem('qb_pnl_r') || 0);
+
+    if (testesRestantes === null) { localStorage.setItem('qb_free_runs', 10); testesRestantes = 10; } 
+    else { testesRestantes = parseInt(testesRestantes); }
+
+    verificarEstadoApp();
+    atualizarTelaPnl();
+
+    function verificarEstadoApp() {
+        if (premiumAtivo) {
+            document.getElementById('counter-display').innerText = "Acesso Premium: ILIMITADO 🔥";
+            document.getElementById('counter-display').style.color = "var(--green)";
+            document.getElementById('paywall').style.display = 'none';
+        } else if (testesRestantes <= 0) {
+            document.getElementById('paywall').style.display = 'flex';
+        } else {
+            document.getElementById('counter-display').innerText = `Testes Gratuitos Restantes: ${testesRestantes}`;
+        }
+    }
+
+    function validarChaveManual() {
+        const chaveDigitada = document.getElementById('input-chave').value.trim();
+        if ((chaveDigitada.length === 2 || chaveDigitada.length === 4) && !isNaN(chaveDigitada)) {
+            localStorage.setItem('qb_premium_status', 'true');
+            premiumAtivo = true;
+            verificarEstadoApp();
+        }
+    }
+
+    function abrirPainelADM() { document.getElementById('adm-panel').style.display = 'flex'; }
+    function fecharPainelADM() { document.getElementById('adm-panel').style.display = 'none'; }
+    
+    function autenticarADM() {
+        if (document.getElementById('adm-senha').value.trim() === "ben150718") {
+            localStorage.setItem('qb_premium_status', 'true');
+            premiumAtivo = true;
+            fecharPainelADM();
+            verificarEstadoApp();
+        }
+    }
+
+    function registrarPnl(isGreen) {
+        if (isGreen) greens++; else reds++;
+        localStorage.setItem('qb_pnl_g', greens);
+        localStorage.setItem('qb_pnl_r', reds);
+        atualizarTelaPnl();
+    }
+
+    function atualizarTelaPnl() {
+        document.getElementById('pnl-greens').innerText = greens;
+        document.getElementById('pnl-reds').innerText = reds;
+        let total = greens + reds;
+        document.getElementById('pnl-taxa').innerText = total > 0 ? ((greens / total) * 100).toFixed(0) + '%' : '0%';
+    }
+
+    // Função matemática de suporte: Fatorial (para Poisson)
+    function fatorial(n) {
+        if (n === 0 || n === 1) return 1;
+        let r = 1;
+        for (let i = 2; i <= n; i++) r *= i;
+        return r;
+    }
+
+    // Algoritmo matemático para cálculo probabilístico de Poisson simplificado
+    function calcularProbabilidadePoisson(lambda, k) {
+        return (Math.pow(lambda, k) * Math.exp(-lambda)) / fatorial(k);
+    }
+
+    // Processador principal de inteligência preditiva cruzada
+    function ejecutarMapeamento() {
+        if (!premiumAtivo && testesRestantes <= 0) { document.getElementById('paywall').style.display = 'flex'; return; }
+        
+        let tCasa = document.getElementById('nome-casa').value.trim().toUpperCase() || "CASA";
+        let tFora = document.getElementById('nome-fora').value.trim().toUpperCase() || "FORA";
+
+        if (!premiumAtivo) { testesRestantes--; localStorage.setItem('qb_free_runs', testesRestantes); verificarEstadoApp(); }
+
+        let oCasa = parseFloat(document.getElementById('odd-casa').value) || 1.0;
+        let oFora = parseFloat(document.getElementById('odd-fora').value) || 1.0;
+        let gCasa = parseFloat(document.getElementById('hist-gols-casa').value) || 0.0;
+        let gFora = parseFloat(document.getElementById('hist-gols-fora').value) || 0.0;
+        let cCasa = parseFloat(document.getElementById('hist-cantos-casa').value) || 0.0;
+        let cFora = parseFloat(document.getElementById('hist-cantos-fora').value) || 0.0;
+        
+        let sGols = gCasa + gFora;
+        let sCantos = cCasa + cFora;
+        let dispOdds = Math.abs(oCasa - oFora);
+
+        // 1. Probabilidade Real 1X2 Implícita das Odds com Ajuste de Margem
+        let probCasa = (1 / oCasa) * 100;
+        let probFora = (1 / oFora) * 100;
+        let margem = (probCasa + probFora) - 100; 
+        probCasa = Math.round(probCasa - (margem / 2));
+        probFora = Math.round(probFora - (margem / 2));
+        let probEmpate = 100 - probCasa - probFora;
+        if(probEmpate < 0) probEmpate = 10;
+
+        // 2. Definição da Tendência Principal com Exibição de Probabilidade
+        if (oCasa < oFora && gCasa >= gFora) {
+            document.getElementById('res-status').innerText = `${tCasa} VENCE (${probCasa}%) 🏠`;
+            document.getElementById('res-status').style.color = "var(--green)";
+        } else if (oFora < oCasa && gFora >= gCasa) {
+            document.getElementById('res-status').innerText = `${tFora} VENCE (${probFora}%) 🚀`;
+            document.getElementById('res-status').style.color = "var(--gold)";
+        } else {
+            let probDupla = Math.min(92, Math.max(60, Math.round(probCasa + probEmpate)));
+            document.getElementById('res-status').innerText = `CHANCE DUPLA (${probDupla}%) 🤝`;
+            document.getElementById('res-status').style.color = "var(--accent)";
+        }
+
+        // 3. Distribuição de Gols via Modelo Estatístico Poisson Baseado nas Médias
+        let p0GolsCasa = calcularProbabilidadePoisson(gCasa, 0);
+        let p0GolsFora = calcularProbabilidadePoisson(gFora, 0);
+        let p1GolsCasa = calcularProbabilidadePoisson(gCasa, 1);
+        let p1GolsFora = calcularProbabilidadePoisson(gFora, 1);
+
+        // Probabilidade de Menos de 1.5 Gols Total (Casos: 0-0, 1-0, 0-1)
+        let probUnder15 = (p0GolsCasa * p0GolsFora) + (p1GolsCasa * p0GolsFora) + (p0GolsCasa * p1GolsFora);
+        let probOver15 = Math.round((1 - probUnder15) * 100);
+
+        // Probabilidade de Menos de 2.5 Gols Total (Adicionando combinações 2-0, 0-2, 1-1)
+        let p2GolsCasa = calcularProbabilidadePoisson(gCasa, 2);
+        let p2GolsFora = calcularProbabilidadePoisson(gFora, 2);
+        let probUnder25 = probUnder15 + (p2GolsCasa * p0GolsFora) + (p0GolsCasa * p2GolsFora) + (p1GolsCasa * p1GolsFora);
+        let probOver25 = Math.round((1 - probUnder25) * 100);
+
+        // Seleção Dinâmica da Linha de Gols Conforme Tendência Matemática
+        if (sGols >= 2.7) {
+            document.getElementById('res-gols').innerText = "+2.5 Gols";
+            document.getElementById('pct-gols').innerText = Math.min(95, Math.max(45, probOver25)) + "%";
+            document.getElementById('res-menos-gols').innerText = "Menos de 4.5";
+            document.getElementById('pct-menos-gols').innerText = Math.min(98, Math.round(85 + (4.5 - sGols) * 5)) + "%";
+        } else if (sGols >= 1.6) {
+            document.getElementById('res-gols').innerText = "+1.5 Gols";
+            document.getElementById('pct-gols').innerText = Math.min(95, Math.max(55, probOver15)) + "%";
+            document.getElementById('res-menos-gols').innerText = "Menos de 3.5";
+            document.getElementById('pct-menos-gols').innerText = Math.min(97, Math.round(80 + (3.5 - sGols) * 7)) + "%";
+        } else {
+            document.getElementById('res-gols').innerText = "+0.5 Gols";
+            let probOver05 = Math.round((1 - (p0GolsCasa * p0GolsFora)) * 100);
+            document.getElementById('pct-gols').innerText = Math.min(95, Math.max(65, probOver05)) + "%";
+            document.getElementById('res-menos-gols').innerText = "Menos de 2.5";
+            document.getElementById('pct-menos-gols').innerText = Math.min(96, Math.max(40, Math.round(probUnder25 * 100))) + "%";
+        }
+
+        // 4. Mercado de Cantos (Escanteios) Coerente com as Médias Informadas
+        let pCantos = 50;
+        if (sCantos >= 10.5) {
+            document.getElementById('res-cantos').innerText = "Mais de 10.5";
+            pCantos = Math.round(58 + (sCantos - 10.5) * 7);
+        } else if (sCantos >= 8.5) {
+            document.getElementById('res-cantos').innerText = "Mais de 8.5";
+            pCantos = Math.round(64 + (sCantos - 8.5) * 10);
+        } else {
+            document.getElementById('res-cantos').innerText = "Mais de 7.5";
+            pCantos = Math.round(70 + (sCantos - 6.5) * 8);
+        }
+        document.getElementById('pct-cantos').innerText = Math.min(94, Math.max(35, pCantos)) + "%";
+
+        // 5. Ambos Marcam (Baseado na probabilidade de nenhum time ficar zerado)
+        let probMarcamAmbos = Math.round((1 - p0GolsCasa) * (1 - p0GolsFora) * 100);
+        probMarcamAmbos = Math.min(88, Math.max(12, probMarcamAmbos));
+        
+        document.getElementById('res-ambos').innerText = probMarcamAmbos > 50 ? "Sim" : "Não";
+        document.getElementById('pct-ambos').innerText = (probMarcamAmbos > 50 ? probMarcamAmbos : (100 - probMarcamAmbos)) + "%";
+
+        // 6. Cartões Proporcionais à Disparidade e Equilíbrio das Odds
+        let pCartoes = dispOdds < 0.8 ? Math.round(70 + (1 / (dispOdds + 0.1))) : Math.round(62);
+        document.getElementById('res-cartoes').innerText = dispOdds < 0.8 ? "Mais de 4.5" : "Mais de 3.5";
+        document.getElementById('pct-cartoes').innerText = Math.min(92, Math.max(45, pCartoes)) + "%";
+
+        // 7. Chutes Proporcionais à Intensidade Ofensiva de Gols Estimados
+        let pChutes = sGols > 2.5 ? Math.round(66 + sGols * 2.5) : Math.round(71);
+        document.getElementById('res-chutes').innerText = sGols > 2.5 ? "Mais de 21.5" : "Mais de 17.5";
+        document.getElementById('pct-chutes').innerText = Math.min(93, Math.max(50, pChutes)) + "%";
+
+        // Tornar bloco de resultados visível em tela
+        document.getElementById('resultados').style.display = 'block';
+    }
+</script>
+</body>
+</html>
